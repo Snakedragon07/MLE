@@ -25,7 +25,6 @@ class CartPoleBatch:
         self.x = self.rng.uniform(*c.X_INIT_RANGE, size = self.n)
         self.x_dot = self.rng.uniform(*c.X_DOT_INIT_RANGE, size = self.n)
         self.alive = np.ones(self.n, dtype=bool)
-        pass
 
     def step(self, forces):
         forces = np.where(self.alive, forces, 0.0)
@@ -36,9 +35,9 @@ class CartPoleBatch:
 
         # 4. integrate: velocity first, then position, using dt
         new_x_dot = self.x_dot + x_ddot*self.dt
-        new_x = self.x + x_ddot*self.dt
+        new_x = self.x + new_x_dot*self.dt
         new_theta_dot = self.theta_dot + theta_ddot*self.dt
-        new_theta = self.theta + theta_ddot*self.dt
+        new_theta = self.theta + new_theta_dot*self.dt
 
         # 5. only apply the update where alive -- frozen pendulums keep old state
         self.x_dot = np.where(self.alive, new_x_dot, self.x_dot)
@@ -47,8 +46,5 @@ class CartPoleBatch:
         self.theta = np.where(self.alive, new_theta, self.theta)
 
         # 6. recompute alive -- once dead, stays dead
-        still_ok = abs(self.theta) < self.theta_threshold
+        still_ok = (abs(self.theta) < self.theta_threshold) & (abs(self.x) < self.x_threshold)
         self.alive = self.alive & still_ok
-
-        # 7. return whatever the caller needs
-        return

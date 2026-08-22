@@ -1,7 +1,9 @@
+import numpy as np
+
 # --- physics ---
 GRAVITY = 9.81
 CART_MASS = 0.2
-POLE_LENGTH = 0.3
+POLE_LENGTH = 1
 DAMPING_COEFF = 1.0
 
 # --- actuation ---
@@ -9,7 +11,7 @@ FORCE_MAG = 1.0
 DT = 0.02
 
 # --- failure thresholds ---
-THETA_THRESHOLD = 0.21   # radians
+THETA_THRESHOLD = np.inf   # radians
 X_THRESHOLD = 2.4       # meters
 
 # --- initial state ranges (used in reset()) ---
@@ -24,7 +26,8 @@ MAX_STEPS = 500          # episode length before it auto-ends
 SEED = None
 
 # --- visualization ---
+plotsize = (12,6)
 alpha = 0.4
-markersize = 1
-fps = 30
-interval = 1/fps
+markersize = 20
+fps = 60
+interval = 1000/fps
