@@ -43,7 +43,7 @@ class CartPoleBatch:
         self.x_dot = np.where(self.alive, new_x_dot, self.x_dot)
         self.x = np.where(self.alive, new_x, self.x)
         self.theta_dot = np.where(self.alive, new_theta_dot, self.theta_dot)
-        self.theta = np.where(self.alive, new_theta, self.theta)
+        self.theta = np.where(self.alive, new_theta % (2*np.pi), self.theta)
 
         # 6. recompute alive -- once dead, stays dead
         still_ok = (abs(self.theta) < self.theta_threshold) & (abs(self.x) < self.x_threshold)

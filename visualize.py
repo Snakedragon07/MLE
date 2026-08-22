@@ -37,5 +37,5 @@ def animate_cartpoles(env, get_forces = None, alpha=c.alpha, interval = c.interv
 
         return poles + carts
 
-    ani = animation.FuncAnimation(fig, update, interval=interval, blit = True)
+    ani = animation.FuncAnimation(fig, update, interval=interval, blit=True, cache_frame_data=False)
     plt.show()

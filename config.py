@@ -28,6 +28,6 @@ SEED = None
 # --- visualization ---
 plotsize = (12,6)
 alpha = 0.4
-markersize = 20
+markersize = 15
 fps = 60
 interval = 1000/fps

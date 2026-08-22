@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d3ed3fba-17d5-4336-a159-55370f168c32" name="Changes" comment="Visualization Programm and some scalar definitions">
+    <list default="true" id="d3ed3fba-17d5-4336-a159-55370f168c32" name="Changes" comment="Tuning of parameters">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/environment.py" beforeDir="false" afterPath="$PROJECT_DIR$/environment.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/policy.py" beforeDir="false" afterPath="$PROJECT_DIR$/policy.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/visualize.py" beforeDir="false" afterPath="$PROJECT_DIR$/visualize.py" afterDir="false" />
     </list>
@@ -126,12 +127,21 @@
       <option name="project" value="LOCAL" />
       <updated>1787393974530</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Tuning of parameters">
+      <option name="closed" value="true" />
+      <created>1787395371108</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1787395371108</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Made the structure and coded the Cartpole Environment" />
     <MESSAGE value="Visualization Programm and some scalar definitions" />
-    <option name="LAST_COMMIT_MESSAGE" value="Visualization Programm and some scalar definitions" />
+    <MESSAGE value="Tuning of parameters" />
+    <option name="LAST_COMMIT_MESSAGE" value="Tuning of parameters" />
   </component>
 </project>
