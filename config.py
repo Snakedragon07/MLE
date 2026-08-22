@@ -22,3 +22,9 @@ X_DOT_INIT_RANGE = (0,0)
 N_PENDULUMS = 25        # how many run in parallel
 MAX_STEPS = 500          # episode length before it auto-ends
 SEED = None
+
+# --- visualization ---
+alpha = 0.4
+markersize = 1
+fps = 30
+interval = 1/fps
