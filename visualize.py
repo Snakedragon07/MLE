@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def animate_cartpoles(env, get_forces = None, alpha=c.alpha, interval = c.interval, plotsize = c.plotsize):
+def animate_cartpoles(env, get_forces = None, alpha=c.alpha, interval = c.interval, plotsize = c.plotsize, kick = 1.0):
 
     fig, ax = plt.subplots(figsize=plotsize)
 
@@ -20,6 +20,14 @@ def animate_cartpoles(env, get_forces = None, alpha=c.alpha, interval = c.interv
         cart_marker, = ax.plot([], [], "s", markersize=c.markersize, alpha = alpha)
         poles.append(pole_line)
         carts.append(cart_marker)
+
+    def on_key(event):
+        if event.key == 'left':
+            env.x_dot -= kick
+        elif event.key == 'right':
+            env.x_dot += kick
+
+    fig.canvas.mpl_connect('key_press_event', on_key)
 
     def update(frame):
         forces = get_forces(env) if get_forces is not None else np.zeros(env.n)
