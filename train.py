@@ -7,9 +7,9 @@ from environment import CartPoleBatch
 from visualize import animate_cartpoles
 
 env = CartPoleBatch(n=c.N_PENDULUMS)
-population = evolution.init_population()
+population = evolution.load_population()
 population = evolution.train(env, population, c.N_GENERATIONS)
-
+evolution.save_population(population)
 
 env.theta_threshold = np.inf
 env.reset()

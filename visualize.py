@@ -15,7 +15,14 @@ def animate_cartpoles(env, get_forces = None, alpha=c.alpha, interval = c.interv
 
     poles = []
     carts = []
-    for i in range(env.n):
+
+    #The best cart of last iteration has alpha 1
+    pole_line, = ax.plot([], [], "-",color= "black", lw=2, alpha=1, zorder = 10)
+    cart_marker, = ax.plot([], [], "s",color = "black", markersize=c.markersize, alpha=1, zorder = 10)
+    poles.append(pole_line)
+    carts.append(cart_marker)
+
+    for i in range(env.n-1):
         pole_line, = ax.plot([], [], "-", lw=2, alpha=alpha)
         cart_marker, = ax.plot([], [], "s", markersize=c.markersize, alpha = alpha)
         poles.append(pole_line)
