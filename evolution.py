@@ -39,7 +39,7 @@ def run_episode(env, population, N_times = c.N_Simulations):
     return total_fitness
 
 # 4. SELECTION & MUTATION
-def evolve(population, fitness, evo_step, elite_frac=c.elite_frac, mutation_std=c.mutation_std, random_frac=c.random_frac):
+def evolve(population, fitness, evo_step, elite_frac=c.elite_frac, F=c.DE_F, CR=c.DE_CR, random_frac=c.random_frac):
     pop_size = population.shape[0]
     n_elites = int(pop_size * elite_frac)
     n_random = int(pop_size * random_frac)
@@ -53,12 +53,18 @@ def evolve(population, fitness, evo_step, elite_frac=c.elite_frac, mutation_std=
 
     parent_indices = np.random.randint(0, n_elites, size=n_offspring)
     parents = elites[parent_indices]
-    quality = fitness[elite_indices].mean() / c.MAX_STEPS
-    gen_decay = 1 - evo_step / c.MAX_STEPS* quality
 
-    noise = np.random.randn(n_offspring, population.shape[1]) * mutation_std * (1-fitness[elite_indices][parent_indices]/c.MAX_STEPS)[:,None] * gen_decay**2
-    new_population[n_elites:n_elites+n_offspring] = parents + noise
+    diff_a_indices = np.random.randint(0, pop_size, size=n_offspring)
+    diff_b_indices = np.random.randint(0, pop_size, size=n_offspring)
+    diff = population[diff_a_indices] - population[diff_b_indices]
+    donor = parents + F * diff
+
+    crossover_mask = np.random.rand(n_offspring, population.shape[1]) < CR
+    offspring = np.where(crossover_mask, donor, parents)
+
+    new_population[n_elites:n_elites+n_offspring] = offspring
     new_population[n_elites+n_offspring:] = np.random.uniform(-1, 1, size=(n_random, population.shape[1]))
+
     return new_population
 
 # 6. OUTER GENERATION LOOP

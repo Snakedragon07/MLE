@@ -38,11 +38,11 @@ NETWORK_LAYOUT = [5,10,10,1]
 
 #--- Evolution ---
 N_GENERATIONS = int(1e6)
-N_Simulations = 4
+N_Simulations = 8
 elite_frac = 0.3
-mutation_std = 0.05
-MUTATION_DECAY_HORIZON = N_GENERATIONS/5
-random_frac = 0.1
+DE_F = 0.2
+DE_CR = 0.5
+random_frac = 0.25
 
 
 #--- Training ---
