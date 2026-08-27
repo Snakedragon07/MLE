@@ -31,7 +31,7 @@ class CartPoleBatch:
         x_ddot = forces/self.m
 
         # 3. pole angular acceleration -- your corrected CCW equation
-        theta_ddot = x_ddot/self.l*np.cos(self.theta)+ self.g/self.l*np.sin(self.theta)-self.theta_dot*(1-self.damp)
+        theta_ddot = x_ddot/self.l*np.cos(self.theta)+ self.g/self.l*np.sin(self.theta)-self.theta_dot*self.damp
 
         # 4. integrate: velocity first, then position, using dt
         new_x_dot = self.x_dot + x_ddot*self.dt

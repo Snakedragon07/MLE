@@ -39,7 +39,7 @@ def run_episode(env, population, N_times = c.N_Simulations):
     return total_fitness
 
 # 4. SELECTION & MUTATION
-def evolve(population, fitness, evo_step, elite_frac=c.elite_frac, mutation_std=c.mutation_std, random_frac=c.random_frac):
+def evolve(population, fitness, evo_step, elite_frac=c.elite_frac, mutation_std=c.mutation_std, random_frac=c.random_frac, mutation_rate=c.mutation_rate):
     pop_size = population.shape[0]
     n_elites = int(pop_size * elite_frac)
     n_random = int(pop_size * random_frac)
@@ -51,12 +51,25 @@ def evolve(population, fitness, evo_step, elite_frac=c.elite_frac, mutation_std=
     new_population = np.zeros_like(population)
     new_population[:n_elites] = elites
 
-    parent_indices = np.random.randint(0, n_elites, size=n_offspring)
+    # rank-weighted parent selection: best elite reproduces more often than
+    # the weakest elite, instead of every elite being equally likely (old:
+    # np.random.randint(0, n_elites, ...) gave the #1 and #15 elite the same
+    # odds of being a parent, which slows down exploitation of good solutions)
+    elite_fitness = fitness[elite_indices]
+    ranks = np.arange(n_elites, 0, -1)  # best elite = n_elites, worst = 1
+    parent_probs = ranks / ranks.sum()
+    parent_indices = np.random.choice(n_elites, size=n_offspring, p=parent_probs)
     parents = elites[parent_indices]
-    quality = fitness[elite_indices].mean() / c.MAX_STEPS
-    gen_decay = 1 - (evo_step / c.N_GENERATIONS) * quality
 
-    noise = np.random.randn(n_offspring, population.shape[1]) * mutation_std * (1 - fitness[elite_indices][parent_indices] / c.MAX_STEPS)[:, None] * gen_decay
+    # only mutate a subset of genes per offspring instead of nudging all
+    # 129 parameters at once -- a full-vector random nudge in a high-dim
+    # space rarely points toward an improvement, so most of it is wasted;
+    # perturbing fewer genes with the same std gives more useful, localized
+    # steps (classic bit-mutation-rate idea, applied to real-valued genes)
+    gene_mask = np.random.rand(n_offspring, population.shape[1]) < mutation_rate
+
+    noise = np.random.randn(n_offspring, population.shape[1]) * mutation_std * (1 - elite_fitness[parent_indices] / c.MAX_STEPS)[:, None]
+    noise *= gene_mask
     new_population[n_elites:n_elites+n_offspring] = parents + noise
 
     new_population[n_elites+n_offspring:] = np.random.uniform(-1, 1, size=(n_random, population.shape[1]))

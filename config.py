@@ -4,10 +4,10 @@ import numpy as np
 GRAVITY = 9.81
 CART_MASS = 0.2
 POLE_LENGTH = 1
-DAMPING_COEFF = 0.9
+DAMPING_COEFF = 0.5
 
 # --- actuation ---
-FORCE_MAG = 1.0
+FORCE_MAG = 2.0
 DT = 0.02
 
 # --- failure thresholds ---
@@ -38,9 +38,10 @@ NETWORK_LAYOUT = [5,8,8,1]
 
 #--- Evolution ---
 elite_frac = 0.3
-mutation_std = 0.025
+mutation_std = 0.5
+mutation_rate = 0.2  # fraction of genes perturbed per offspring
 random_frac = 0.1
-N_GENERATIONS = 100
-N_Simulations = 4
+N_GENERATIONS = 500
+N_Simulations = 8
 
 POPULATION_FILE = "population.npy"
