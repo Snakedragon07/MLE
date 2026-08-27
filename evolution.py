@@ -54,19 +54,26 @@ def evolve(population, fitness, evo_step, elite_frac=c.elite_frac, mutation_std=
     parent_indices = np.random.randint(0, n_elites, size=n_offspring)
     parents = elites[parent_indices]
     quality = fitness[elite_indices].mean() / c.MAX_STEPS
-    gen_decay = 1 - (evo_step / c.N_GENERATIONS) * quality
+    gen_decay = 1 - evo_step / c.MAX_STEPS* quality
 
-    noise = np.random.randn(n_offspring, population.shape[1]) * mutation_std * (1 - fitness[elite_indices][parent_indices] / c.MAX_STEPS)[:, None] * gen_decay
+    noise = np.random.randn(n_offspring, population.shape[1]) * mutation_std * (1-fitness[elite_indices][parent_indices]/c.MAX_STEPS)[:,None] * gen_decay**2
     new_population[n_elites:n_elites+n_offspring] = parents + noise
-
     new_population[n_elites+n_offspring:] = np.random.uniform(-1, 1, size=(n_random, population.shape[1]))
-
     return new_population
 
 # 6. OUTER GENERATION LOOP
-def train(env, population, n_generations):
+def train(env, population, n_generations, on_generation=None):
     for generation in range(n_generations):
         scores = run_episode(env, population)
+        n_random = int(len(scores) * c.random_frac)
+        tracked = scores[:len(scores) - n_random]
+        print(generation, "Max:", tracked.max()/c.MAX_STEPS, "Mean:", tracked.mean()/c.MAX_STEPS)
+        if on_generation is not None:
+            on_generation(generation, tracked)
+        if tracked.max()/c.MAX_STEPS > c.Quality_threshhold and tracked.mean()/c.MAX_STEPS > c.Quality_mean_threshhold:
+            break
+        if getattr(on_generation, "stop_requested", False):
+            print("Training stopped by user (Escape).")
+            break
         population = evolve(population, scores, generation)
-        print(generation, scores.max())
     return population

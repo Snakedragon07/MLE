@@ -11,12 +11,12 @@ FORCE_MAG = 1.0
 DT = 0.02
 
 # --- failure thresholds ---
-THETA_THRESHOLD = np.inf   # radians
+THETA_THRESHOLD = np.inf # radians
 X_THRESHOLD = 2.4       # meters
 
 # --- initial state ranges (used in reset()) ---
 THETA_INIT_RANGE = (-3.14,3.14)      # e.g. (-x, x) radians
-THETA_DOT_INIT_RANGE = (0,0)
+THETA_DOT_INIT_RANGE = (-0,0)
 X_INIT_RANGE = (0,0)
 X_DOT_INIT_RANGE = (0,0)
 
@@ -34,13 +34,18 @@ interval = 1000/fps
 
 #--- MLP ---
 #[5,x,..,y,1]
-NETWORK_LAYOUT = [5,8,8,1]
+NETWORK_LAYOUT = [5,10,10,1]
 
 #--- Evolution ---
-elite_frac = 0.3
-mutation_std = 0.025
-random_frac = 0.1
-N_GENERATIONS = 100
+N_GENERATIONS = int(1e6)
 N_Simulations = 4
+elite_frac = 0.3
+mutation_std = 0.05
+MUTATION_DECAY_HORIZON = N_GENERATIONS/5
+random_frac = 0.1
 
+
+#--- Training ---
 POPULATION_FILE = "population.npy"
+Quality_threshhold = 0.90
+Quality_mean_threshhold = 0.7

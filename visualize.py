@@ -5,7 +5,42 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+def live_fitness_plot():
+    plt.ion()
+    fig, ax = plt.subplots()
+    best_line, = ax.plot([], [], label="best")
+    mean_line, = ax.plot([], [], label="mean")
+    ax.set_xlabel("generation")
+    ax.set_ylabel("1 - fitness (log scale)")
+    ax.set_yscale("log")
+    ax.invert_yaxis()
+    ax.legend()
+
+    gens, bests, means = [], [], []
+
+    def update(generation, scores):
+        gens.append(generation)
+        bests.append(max(1 - scores.max()/c.MAX_STEPS, 1e-6))
+        means.append(max(1 - scores.mean()/c.MAX_STEPS, 1e-6))
+        best_line.set_data(gens, bests)
+        mean_line.set_data(gens, means)
+        ax.relim()
+        ax.autoscale_view()
+        fig.canvas.draw()
+        fig.canvas.flush_events()
+
+    update.stop_requested = False
+
+    def on_key(event):
+        if event.key == 'escape':
+            update.stop_requested = True
+
+    fig.canvas.mpl_connect('key_press_event', on_key)
+
+    return update
+
 def animate_cartpoles(env, get_forces = None, alpha=c.alpha, interval = c.interval, plotsize = c.plotsize, kick = 1.0):
+    plt.ioff()
 
     fig, ax = plt.subplots(figsize=plotsize)
 
