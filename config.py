@@ -40,6 +40,7 @@ NETWORK_LAYOUT = [5,10,10,1]
 N_GENERATIONS = int(1e6)
 N_Simulations = 4
 elite_frac = 0.3
+decay_rate = 0.999
 mutation_std = 0.3
 MUTATION_DECAY_HORIZON = N_GENERATIONS/5
 random_frac = 0.1
@@ -47,5 +48,5 @@ random_frac = 0.1
 
 #--- Training ---
 POPULATION_FILE = "population.npy"
-Quality_threshhold = 0.95
+Quality_threshhold = 0.99
 Quality_mean_threshhold = 0.8

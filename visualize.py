@@ -11,19 +11,23 @@ def live_fitness_plot():
     best_line, = ax.plot([], [], label="best")
     mean_line, = ax.plot([], [], label="mean")
     ax.set_xlabel("generation")
-    ax.set_ylabel("1 - fitness (log scale)")
+    ax.set_ylabel("1 - fitness / decay (log scale)")
     ax.set_yscale("log")
     ax.invert_yaxis()
     ax.legend()
 
-    gens, bests, means = [], [], []
+    gens, bests, means, decays = [], [], [], []
 
-    def update(generation, scores):
+    def update(generation, scores, decay=None):
         gens.append(generation)
         bests.append(max(1 - scores.max()/c.MAX_STEPS, 1e-6))
         means.append(max(1 - scores.mean()/c.MAX_STEPS, 1e-6))
         best_line.set_data(gens, bests)
         mean_line.set_data(gens, means)
+
+        if decay is not None:
+            decays.append(max(decay, 1e-6))
+
         ax.relim()
         ax.autoscale_view()
         fig.canvas.draw()

@@ -38,6 +38,11 @@ def run_episode(env, population, N_times = c.N_Simulations):
     total_fitness /= N_times
     return total_fitness
 
+# shared by evolve() and train() so the number that's actually used to scale
+# mutation is the exact same number that gets plotted
+def decay_schedule(evo_step):
+    return c.decay_rate ** evo_step   # decay_rate slightly under 1, e.g. 0.999
+
 # 4. SELECTION & MUTATION
 def evolve(population, fitness, evo_step, elite_frac=c.elite_frac, mutation_std=c.mutation_std, random_frac=c.random_frac):
     pop_size = population.shape[0]
@@ -53,10 +58,9 @@ def evolve(population, fitness, evo_step, elite_frac=c.elite_frac, mutation_std=
 
     parent_indices = np.random.randint(0, n_elites, size=n_offspring)
     parents = elites[parent_indices]
-    quality = fitness[elite_indices].mean() / c.MAX_STEPS
-    gen_decay = 1 - evo_step / c.MAX_STEPS* quality
+    gen_decay = decay_schedule(evo_step)
 
-    noise = np.random.randn(n_offspring, population.shape[1]) * mutation_std * (1-fitness[elite_indices][parent_indices]/c.MAX_STEPS)[:,None] * gen_decay**2
+    noise = np.random.randn(n_offspring, population.shape[1]) * mutation_std * (1-fitness[elite_indices][parent_indices]/c.MAX_STEPS)[:,None] * gen_decay
     new_population[n_elites:n_elites+n_offspring] = parents + noise
     new_population[n_elites+n_offspring:] = np.random.uniform(-1, 1, size=(n_random, population.shape[1]))
     return new_population
@@ -67,9 +71,10 @@ def train(env, population, n_generations, on_generation=None):
         scores = run_episode(env, population)
         n_random = int(len(scores) * c.random_frac)
         tracked = scores[:len(scores) - n_random]
-        print(generation, "Max:", tracked.max()/c.MAX_STEPS, "Mean:", tracked.mean()/c.MAX_STEPS)
+        decay = decay_schedule(generation)
+        print(generation, "Max:", tracked.max()/c.MAX_STEPS, "Mean:", tracked.mean()/c.MAX_STEPS, "Decay:", decay)
         if on_generation is not None:
-            on_generation(generation, tracked)
+            on_generation(generation, tracked, decay)
         if tracked.max()/c.MAX_STEPS > c.Quality_threshhold and tracked.mean()/c.MAX_STEPS > c.Quality_mean_threshhold:
             break
         if getattr(on_generation, "stop_requested", False):
