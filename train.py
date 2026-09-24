@@ -17,5 +17,6 @@ winsound.MessageBeep()
 
 env.theta_threshold = np.inf
 env.reset()
-get_forces = lambda env: policy.MLP(env, population, evolution.layout)
+weights_and_biases = policy.build_weights(population, evolution.layout)
+get_forces = lambda env: policy.forward(env, weights_and_biases)
 animate_cartpoles(env, get_forces)

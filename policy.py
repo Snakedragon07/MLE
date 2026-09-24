@@ -17,29 +17,32 @@ def PI(env):
     P_coeff = 0.7
     I_coeff = 0.2
 
-def MLP(env, parameters, layout, activation = None):
+def build_weights(parameters, layout):
     #parameter shape (Pop_size, Parameter count), layout array [Input_size, HL2_size...., HLM_size]
     lay_param = p_count(layout)
 
-    if len(parameters[0,:]) != lay_param:
-        return
-    else:
-        pop_size = parameters.shape[0]
-        offset = 0
-        weights_and_biases = []
+    if parameters.shape[1] != lay_param:
+        return None
 
-        for i in range(len(layout)-1):
-            w_size = layout[i] * layout[i+1]
-            b_size = layout[i+1]
+    pop_size = parameters.shape[0]
+    offset = 0
+    weights_and_biases = []
 
-            W = parameters[:, offset:offset+w_size].reshape(pop_size, layout[i], layout[i+1])
-            offset += w_size
+    for i in range(len(layout)-1):
+        w_size = layout[i] * layout[i+1]
+        b_size = layout[i+1]
 
-            b = parameters[:, offset:offset+b_size]
-            offset += b_size
+        W = parameters[:, offset:offset+w_size].reshape(pop_size, layout[i], layout[i+1])
+        offset += w_size
 
-            weights_and_biases.append((W, b))
+        b = parameters[:, offset:offset+b_size]
+        offset += b_size
 
+        weights_and_biases.append((W, b))
+
+    return weights_and_biases
+
+def forward(env, weights_and_biases, activation=None):
     if activation is None:
         activation = np.tanh
 
@@ -55,3 +58,10 @@ def MLP(env, parameters, layout, activation = None):
 
     force = h[:, 0] * env.force_mag
     return force
+
+def MLP(env, parameters, layout, activation = None):
+    #kept for callers that need weights rebuilt every call (e.g. per-frame animation with changing population)
+    weights_and_biases = build_weights(parameters, layout)
+    if weights_and_biases is None:
+        return
+    return forward(env, weights_and_biases, activation)

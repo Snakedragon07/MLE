@@ -26,11 +26,12 @@ def fitness(env):
 
 # 3. FITNESS EVALUATION (one full episode)
 def run_episode(env, population, N_times = c.N_Simulations):
+    weights_and_biases = p.build_weights(population, layout)
     total_fitness = np.zeros(env.n)
     for i in range(N_times):
         env.reset()
         for step in range(c.MAX_STEPS):
-            forces = p.MLP(env, population, layout)
+            forces = p.forward(env, weights_and_biases)
             env.step(forces)
             total_fitness += np.where(env.alive, fitness(env), 0.0)
             if not env.alive.any():
@@ -41,7 +42,7 @@ def run_episode(env, population, N_times = c.N_Simulations):
 # shared by evolve() and train() so the number that's actually used to scale
 # mutation is the exact same number that gets plotted
 def decay_schedule(evo_step):
-    return c.decay_rate ** evo_step   # decay_rate slightly under 1, e.g. 0.999
+    return np.max([0.1,c.decay_rate ** evo_step])   # decay_rate slightly under 1, e.g. 0.999
 
 # 4. SELECTION & MUTATION
 def evolve(population, fitness, evo_step, elite_frac=c.elite_frac, mutation_std=c.mutation_std, random_frac=c.random_frac):

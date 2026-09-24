@@ -4,10 +4,10 @@ import numpy as np
 GRAVITY = 9.81
 CART_MASS = 0.2
 POLE_LENGTH = 1
-DAMPING_COEFF = 0
+DAMPING_COEFF = 0.2
 
 # --- actuation ---
-FORCE_MAG = 2.0
+FORCE_MAG = 2.5
 DT = 0.02
 
 # --- failure thresholds ---
@@ -38,9 +38,9 @@ NETWORK_LAYOUT = [5,10,10,1]
 
 #--- Evolution ---
 N_GENERATIONS = int(1e6)
-N_Simulations = 4
+N_Simulations = 10
 elite_frac = 0.3
-decay_rate = 0.999
+decay_rate = 0.995
 mutation_std = 0.3
 MUTATION_DECAY_HORIZON = N_GENERATIONS/5
 random_frac = 0.1
