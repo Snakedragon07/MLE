@@ -1,3 +1,0 @@
-numpy
-matplotlib
-torch  # CUDA build: pip install torch --index-url https://download.pytorch.org/whl/cu128
