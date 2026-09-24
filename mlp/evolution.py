@@ -5,8 +5,10 @@ import time
 import numpy as np
 import torch
 
+from Agents import CrossEntropyMethod
 from . import config as c
 from .simulation import DEVICE, DTYPE, N_PARAMS, run_episodes
+from Agents import *
 
 
 # ============================== GPU side ==============================
@@ -21,27 +23,6 @@ def start_angles(n_sims=c.N_SIMULATIONS):
     lo, hi = c.THETA_INIT_RANGE
     edges = torch.linspace(lo, hi, n_sims + 1, device=DEVICE, dtype=DTYPE)
     return edges[:-1] + torch.rand(n_sims, device=DEVICE, dtype=DTYPE) * (edges[1:] - edges[:-1])
-
-
-def decay_schedule(generation):
-    """Mutation strength shrinks slowly over the generations."""
-    return c.DECAY_RATE ** generation
-
-
-@torch.no_grad()
-def evolve(population, fitness, generation):
-    """Pure CEM: row 0 = cloud mean (the current best guess), rest = samples from the cloud."""
-    P = population.shape[0]
-    n_elites = int(P * c.ELITE_FRAC)
-
-    order = torch.argsort(fitness, descending=True)[:n_elites]
-    elites = population[order]
-
-    mean = elites.mean(dim=0)
-    std = elites.std(dim=0) + c.CEM_EXTRA_STD * decay_schedule(generation)
-
-    samples = mean + std * torch.randn(P - 1, N_PARAMS, device=DEVICE, dtype=DTYPE)
-    return torch.cat([mean[None, :], samples])          # (P, N_PARAMS)
 
 
 # ============================== CPU side ==============================
@@ -68,15 +49,16 @@ def load_population(path=c.POPULATION_FILE, n=c.POP_SIZE):
     return pop[:n]
 
 
-def train(population, n_generations=c.N_GENERATIONS, on_generation=None):
-    """Main loop. Returns the population sorted best-first.
-
-    on_generation(generation, best, mean) is called every generation (e.g. to update a plot).
-    If it has an attribute stop_requested that becomes True, training stops.
-    """
+def train(population, n_generations=c.N_GENERATIONS, on_generation=None, agent = "CEM"):
     P = population.shape[0]
     n_random = int(P * c.RANDOM_FRAC)
     scores = None                                 # scores that belong to the CURRENT population
+
+    match agent:
+        case "CEM":
+            evolve = CrossEntropyMethod.evolve
+        case _:
+            raise ValueError(f"Unknown agent: {agent}")
 
     try:
         for gen in range(n_generations):
@@ -89,7 +71,7 @@ def train(population, n_generations=c.N_GENERATIONS, on_generation=None):
             tracked = scores[:P - n_random] / c.MAX_STEPS        # ignore the random newcomers
             best, mean = tracked.max().item(), tracked.mean().item()
             ms = (time.perf_counter() - t0) * 1000
-            print(f"{gen:6d}  best {best:.4f}  mean {mean:.4f}  decay {decay_schedule(gen):.4f}  {ms:5.0f} ms")
+            print(f"{gen:6d}  best {best:.4f}  mean {mean:.4f} {ms:5.0f} ms")
 
             if on_generation is not None:
                 on_generation(gen, best, mean)

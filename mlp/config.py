@@ -27,14 +27,11 @@ EARLY_EXIT_CHECK = 50
 # --- network ---
 NETWORK_LAYOUT = [5, 10, 10, 10, 1]     # [inputs, hidden..., output]
 
-# --- evolution ---
-POP_SIZE = 8192                     # individuals per generation
+# --- population ---
+POP_SIZE = 8192                  # individuals per generation
 N_SIMULATIONS = 32                  # episodes per individual (same start angles for everyone)
 N_GENERATIONS = int(1e6)
-ELITE_FRAC = 0.15
 RANDOM_FRAC = 0.0
-CEM_EXTRA_STD = 0.05
-DECAY_RATE = 0.999
 
 # --- stop criteria ---
 QUALITY_BEST = 0.99
