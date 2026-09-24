@@ -49,3 +49,10 @@ ALPHA = 0.2                         # transparency of the other carts
 MARKER_SIZE = 15
 INTERVAL_MS = DT * 1000             # ms per animation frame -> real time
 KICK = 1.0                          # velocity added by the arrow keys
+
+#---AGENTS---
+
+#---CEM---
+ELITE_FRAC = 0.15
+CEM_EXTRA_STD = 0.05
+DECAY_RATE = 0.999
