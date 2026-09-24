@@ -58,8 +58,9 @@ def physics_step(x, x_dot, th, th_dot, alive, force):
 
     return x, x_dot, th, th_dot, alive
 
-def step_fitness(x,th):
-    return ((1 + torch.cos(th)) / 2) * (1- (x/c.X_THRESHOLD)**2)
+def step_fitness(x, th):
+    upright = ((1 + torch.cos(th)) / 2) ** 4
+    return upright * (1 - (x / c.X_THRESHOLD) ** 2)
 
 @torch.no_grad()
 def run_episodes(population, start_th):

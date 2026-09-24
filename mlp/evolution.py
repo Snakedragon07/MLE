@@ -30,25 +30,18 @@ def decay_schedule(generation):
 
 @torch.no_grad()
 def evolve(population, fitness, generation):
-    """Next generation: [elites (best first), mutated children, random newcomers]."""
+    """Pure CEM: row 0 = cloud mean (the current best guess), rest = samples from the cloud."""
     P = population.shape[0]
     n_elites = int(P * c.ELITE_FRAC)
-    n_random = int(P * c.RANDOM_FRAC)
-    n_children = P - n_elites - n_random
 
-    # 1. elites: the n_elites best, best first
     order = torch.argsort(fitness, descending=True)[:n_elites]
-    elites, elite_fit = population[order], fitness[order]
+    elites = population[order]
 
-    # 2. children: random elite parent + noise (good parents -> small noise)
-    parents = torch.randint(0, n_elites, (n_children,), device=DEVICE)
-    std = c.MUTATION_STD * (1 - elite_fit[parents] / c.MAX_STEPS) * decay_schedule(generation)
-    children = elites[parents] + torch.randn(n_children, N_PARAMS, device=DEVICE, dtype=DTYPE) * std[:, None]
+    mean = elites.mean(dim=0)
+    std = elites.std(dim=0) + c.CEM_EXTRA_STD * decay_schedule(generation)
 
-    # 3. random newcomers keep exploring
-    randoms = init_population(n_random)
-
-    return torch.cat([elites, children, randoms])
+    samples = mean + std * torch.randn(P - 1, N_PARAMS, device=DEVICE, dtype=DTYPE)
+    return torch.cat([mean[None, :], samples])          # (P, N_PARAMS)
 
 
 # ============================== CPU side ==============================
