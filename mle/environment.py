@@ -1,4 +1,4 @@
-import config as c
+from . import config as c
 import numpy as np
 
 class CartPoleBatch:

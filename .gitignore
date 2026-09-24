@@ -1,0 +1,15 @@
+# Environments
+.venv/
+.conda/
+
+# IDE settings
+.idea/
+.vscode/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Generated data
+*.npy
+results/

@@ -1,4 +1,4 @@
-import config as c
+from . import config as c
 import numpy as np
 
 def p_count(layout): #[Input, Hidden Layer 1, ....; Output]

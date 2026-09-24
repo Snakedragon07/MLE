@@ -1,4 +1,4 @@
-import config as c
+from . import config as c
 
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt

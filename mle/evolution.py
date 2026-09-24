@@ -1,6 +1,6 @@
-import environment
-import config as c
-import policy as p
+from . import environment
+from . import config as c
+from . import policy as p
 import numpy as np
 import os
 

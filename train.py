@@ -1,12 +1,9 @@
-import config as c
-import policy
-import evolution
 import numpy as np
 import winsound
 
-import visualize
-from environment import CartPoleBatch
-from visualize import animate_cartpoles
+from mle import config as c, evolution, policy, visualize
+from mle.environment import CartPoleBatch
+from mle.visualize import animate_cartpoles
 
 env = CartPoleBatch(n=c.N_PENDULUMS)
 population = evolution.load_population()
